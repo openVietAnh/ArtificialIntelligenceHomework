@@ -11,7 +11,6 @@ def move_to_new_state(current_state):
     global solutions_count, current_path
     if 7 in current_state:
         solutions_count += 1
-        print(current_state, solutions_count)
     else:
         # Empty bottle
         for i in range(3):
@@ -45,8 +44,11 @@ def move_to_new_state(current_state):
                         current_path.pop()
 
 if __name__ == "__main__":
-    current_state = [0, 0, 0]
-    move_to_new_state(current_state)
-    print(solutions_count)
+    try:
+        current_state = [0, 0, 0]
+        move_to_new_state(current_state)
+        print(solutions_count)
+    except KeyboardInterrupt:
+        print(solutions_count)
     
-# Result: Unlimited solution
+# Result: at least 44900799 solution
