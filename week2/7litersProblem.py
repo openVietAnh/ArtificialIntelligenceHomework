@@ -49,4 +49,4 @@ if __name__ == "__main__":
     move_to_new_state(current_state)
     print(solutions_count)
     
-# Result: Unlimited solution
+# Result: at least 11815249 solution
