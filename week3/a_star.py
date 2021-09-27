@@ -1,6 +1,6 @@
 import heapq
 
-F_X, G_X_ONLY, H_X_ONLY = 0, 1, 2
+G_X_AND_H_X, G_X_ONLY, H_X_ONLY = 0, 1, 2
 
 MAP = {
     "arad": (("sibiu", 140), ("zerind", 75), ("timisoara", 118)),
@@ -33,38 +33,38 @@ STRAIGHT_LINE_DISTANCE = {
 }
 
 def aStar(start, finish, mode):
-    s, min_heap, loop = set(), [(0, ["arad"])], 0
+    s, min_heap, loop = set(), [(0, 0, ["arad"])], 0
     heapq.heapify(min_heap)
     try:
         while True:
             loop += 1
             current_min_path = heapq.heappop(min_heap)
-            current_cost = current_min_path[0]
-            last_node = current_min_path[1][-1]
+            g_cost = current_min_path[1]
+            last_node = current_min_path[2][-1]
             if last_node in s:
                 continue
             if last_node == finish:
                 return loop, current_min_path
             s.add(last_node)
             for next_node in MAP[last_node]:
-                if mode == F_X:
-                    next_cost = current_cost + STRAIGHT_LINE_DISTANCE[next_node[0]] + next_node[1]
+                if mode == G_X_AND_H_X:
+                    f_cost = g_cost + STRAIGHT_LINE_DISTANCE[next_node[0]] + next_node[1]
                 elif mode == G_X_ONLY:
-                    next_cost = current_cost + next_node[1]
+                    f_cost = g_cost + next_node[1]
                 else:
-                    next_cost = STRAIGHT_LINE_DISTANCE[next_node[0]]
-                heapq.heappush(min_heap, (next_cost, current_min_path[1] + [next_node[0]]))
+                    f_cost = STRAIGHT_LINE_DISTANCE[next_node[0]]
+                heapq.heappush(min_heap, (f_cost, g_cost + next_node[1], current_min_path[2] + [next_node[0]]))
     except IndexError:
         return loop, (0, "No Solution")
 
 print("Shortest path using A* with f(x) = g(x) + h(x): ")
-loop_time, shortest_path = aStar("arad", "bucharest", F_X)
-print(shortest_path[1], ", loop time: ", loop_time)
+loop_time, solution = aStar("arad", "bucharest", G_X_AND_H_X)
+print(solution[2], ", distance:", solution[1], ", loop time:", loop_time)
 
 print("Shortest path using A* with f(x) = g(x): ")
-loop_time, shortest_path = aStar("arad", "bucharest", G_X_ONLY)
-print(shortest_path[1], ", loop time: ", loop_time)
+loop_time, solution = aStar("arad", "bucharest", G_X_ONLY)
+print(solution[2], ", distance:", solution[1], ", loop time:", loop_time)
 
 print("Shortest path using A* with f(x) = h(x): ")
-loop_time, shortest_path = aStar("arad", "bucharest", H_X_ONLY)
-print(shortest_path[1], ", loop time: ", loop_time)
+loop_time, solution = aStar("arad", "bucharest", H_X_ONLY)
+print(solution[2], ", distance:", solution[1], ", loop time:", loop_time)
