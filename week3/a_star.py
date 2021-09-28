@@ -1,7 +1,5 @@
 import heapq
 
-G_X_AND_H_X, G_X_ONLY, H_X_ONLY = 0, 1, 2
-
 MAP = {
     "arad": (("sibiu", 140), ("zerind", 75), ("timisoara", 118)),
     "bucharest": (("pitesti", 101), ("fagaras", 211), ("urziceni", 85), ("giurgiu", 90)),
@@ -44,12 +42,15 @@ def aStar(start, finish, mode):
             if last_node in s:
                 continue
             if last_node == finish:
-                return loop, current_min_path
+                print("Shortest path from {} to {} using {}:\n\t{}"
+                    .format(start, finish, mode, " -> ".join(current_min_path[2])))
+                print("\tDistance: {}, Search Time: {}".format(current_min_path[1], loop))
+                return
             s.add(last_node)
             for next_node in MAP[last_node]:
-                if mode == G_X_AND_H_X:
+                if mode == "f(x) = g(x) + h(x)":
                     f_cost = g_cost + STRAIGHT_LINE_DISTANCE[next_node[0]] + next_node[1]
-                elif mode == G_X_ONLY:
+                elif mode == "f(x) = g(x)":
                     f_cost = g_cost + next_node[1]
                 else:
                     f_cost = STRAIGHT_LINE_DISTANCE[next_node[0]]
@@ -57,14 +58,6 @@ def aStar(start, finish, mode):
     except IndexError:
         return loop, (0, "No Solution")
 
-print("Shortest path using A* with f(x) = g(x) + h(x): ")
-loop_time, solution = aStar("arad", "bucharest", G_X_AND_H_X)
-print(solution[2], ", distance:", solution[1], ", loop time:", loop_time)
-
-print("Shortest path using A* with f(x) = g(x): ")
-loop_time, solution = aStar("arad", "bucharest", G_X_ONLY)
-print(solution[2], ", distance:", solution[1], ", loop time:", loop_time)
-
-print("Shortest path using A* with f(x) = h(x): ")
-loop_time, solution = aStar("arad", "bucharest", H_X_ONLY)
-print(solution[2], ", distance:", solution[1], ", loop time:", loop_time)
+aStar("arad", "bucharest", "f(x) = g(x) + h(x)")
+aStar("arad", "bucharest", "f(x) = g(x)")
+aStar("arad", "bucharest", "f(x) = h(x)")
