@@ -28,7 +28,7 @@ def get_terminal(board, turn_count):
         return 0
     return 1
 
-def minimax(board, depth, isMaximized):
+def minimax(board, depth, isMaximized, alpha, beta):
     current_state = get_terminal(board, depth)
     if current_state != 1:
         return current_state, -1, -1
@@ -42,20 +42,24 @@ def minimax(board, depth, isMaximized):
                     line = list(row)
                     copy.append(line)
                 copy[i][j] = "O" if isMaximized else "X"
-                result, _, _ = minimax(copy, depth + 1, not isMaximized)
+                result, _, _ = minimax(copy, depth + 1, not isMaximized, alpha, beta)
                 if isMaximized:
                     if result > value:
                         x, y = i, j
                         value = result
+                    alpha = max(value, alpha)
                 else:
                     if result < value:
                         x, y = i, j
                         value = result
+                    beta = min(value, beta)
+            if beta <= alpha:
+                break
     return value, x, y
 
 def get_next_move(board):
     global turn_count
-    return minimax(board, turn_count, True)
+    return minimax(board, turn_count, True, -MAX_VALUE, MAX_VALUE)
 
 while turn_count < BOARD_SIZE ** 2:
     print_board(board)
